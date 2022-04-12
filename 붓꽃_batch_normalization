@@ -1,0 +1,100 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/sanho-is-coral/colab_practice/blob/main/%EB%B6%93%EA%BD%83_batch_normalization\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        ""
+      ],
+      "metadata": {
+        "id": "oc0h_cH81ITK"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Iris\n",
+        "import tensorflow as tf\n",
+        "import pandas as pd\n",
+        "\n",
+        "#과거의 데이터 준비\n",
+        "fileRoute='https://raw.githubusercontent.com/blackdew/tensorflow1/master/csv/iris.csv'\n",
+        "iris=pd.read_csv(fileRoute)\n",
+        "encoding=pd.get_dummies(iris)#원핫인코딩을 위한 데이터 준비. 종속값이 범주형 데이터일 때 범주를 칼럼 형태로 만듬\n",
+        "\n",
+        "x=encoding[['꽃잎길이','꽃잎폭','꽃받침길이','꽃받침폭']]\n",
+        "y=encoding[['품종_setosa','품종_versicolor','품종_virginica']]\n",
+        "print(x.shape, y.shape)\n",
+        "\n",
+        "#batch nomalization\n",
+        "X=tf.keras.layers.Input(shape=[4])\n",
+        "\n",
+        "H=tf.keras.layers.Dense(8)(X)\n",
+        "H=tf.keras.layers.BatchNormalization()(H)\n",
+        "H=tf.keras.layers.Activation('swish')(H)\n",
+        "\n",
+        "H=tf.keras.layers.Dense(8)(H)\n",
+        "H=tf.keras.layers.BatchNormalization()(H)\n",
+        "H=tf.keras.layers.Activation('swish')(H)\n",
+        "\n",
+        "H=tf.keras.layers.Dense(8)(H)\n",
+        "H=tf.keras.layers.BatchNormalization()(H)\n",
+        "H=tf.keras.layers.Activation('swish')(H)\n",
+        "\n",
+        "Y=tf.keras.layers.Dense(3, activation='softmax')(H) #softmax는 결과값을 확률지표로 보여줌\n",
+        "model=tf.keras.models.Model(X,Y)\n",
+        "model.compile(loss='categorical_crossentropy',metrics='accuracy') \n",
+        "#회귀는 mse 분류는 crossentropy 사용, accuracy는 결과창에서 정확도 출력\n",
+        "model.fit(x,y,epochs=1000, verbose=0)\n",
+        "print(model.predict(x[-5:]))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "-o7l_BYHMKBp",
+        "outputId": "e6955ef7-fb60-4b83-a699-5f453f5cf12b"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "(150, 4) (150, 3)\n",
+            "[[3.9867179e-10 7.5531672e-05 9.9992442e-01]\n",
+            " [3.2411704e-06 2.1689769e-02 9.7830701e-01]\n",
+            " [4.1485265e-07 2.8274935e-03 9.9717218e-01]\n",
+            " [1.9100273e-08 3.8617324e-02 9.6138269e-01]\n",
+            " [3.4057466e-05 4.9464324e-01 5.0532269e-01]]\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "collapsed_sections": [],
+      "name": "Colaboratory에 오신 것을 환영합니다의 사본",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
